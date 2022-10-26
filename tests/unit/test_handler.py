@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from add import app
+from lambdas.add import app
 
 
 @pytest.fixture()

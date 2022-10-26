@@ -24,16 +24,16 @@ Resources:
     Properties:
       TableName: DynamoTable
       AttributeDefinitions:
-        - AttributeName: SerialNumber
-          AttributeType: N
-        - AttributeName: TimeCreated
+        - AttributeName: device_serial
           AttributeType: S
+        - AttributeName: time_created
+          AttributeType: N
       #        - AttributeName: BatteryState
       #          AttributeType: N
       KeySchema:
-        - AttributeName: SerialNumber
+        - AttributeName: device_serial
           KeyType: HASH
-        - AttributeName: TimeCreated
+        - AttributeName: time_created
           KeyType: RANGE
       #      LocalSecondaryIndexes:
       #        - IndexName: SerialNumber-BatteryState-Table
@@ -49,14 +49,23 @@ Resources:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
 
+  MyLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: layers/my_layer
+      CompatibleRuntimes:
+        - python3.9
+
   AddFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: AddDevice
-      CodeUri: add/
+      CodeUri: lambdas/add/
       Handler: app.lambda_handler
       Runtime: python3.9
       Description: Lambda function that writes devices to DynamoDb
+      Layers:
+        - !Ref MyLayer
       Events:
         AddImageApi:
           Type: Api
@@ -77,10 +86,12 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: GetFunction
-      CodeUri: get/
+      CodeUri: lambdas/get/
       Handler: app.lambda_handler
       Runtime: python3.9
       Description: Lambda used for getting stuff
+      Layers:
+        - !Ref MyLayer
       Events:
         GetAllImagesApi:
           Type: Api
