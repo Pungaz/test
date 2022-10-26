@@ -91,10 +91,9 @@ Resources:
             RestApiId: !Ref ApiGateway
             Path: /get/{device_serial}
             Method: GET
-#            ovo je da se doda query param
-#            RequestParameters:
-#              - method.request.querystring.device_serial:
-#                  Required: false
+            RequestParameters:
+              - method.request.querystring.latest:
+                  Required: false
       Policies:
 #        - AWSLambdaExecute
         - DynamoDBCrudPolicy:

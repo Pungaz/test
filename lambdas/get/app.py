@@ -4,6 +4,7 @@ from typing import Optional, Any
 
 import boto3
 
+from dto import GetSingleDeviceRequest
 from model import DeviceState
 from repository import Repository
 
@@ -13,10 +14,25 @@ repository = Repository(dynamo_db=dynamo_db, table_name=DYNAMO_DB_TABLE_NAME)
 
 
 def lambda_handler(event: dict[str, Any], _context: Any):
-    device_serial = event['pathParameters']['device_serial']
+    device_serial: str = event['pathParameters']['device_serial']
     print(f'Serial number: {device_serial}')
 
-    device_state: Optional[DeviceState] = repository.get_latest_battery_status_by_device_serial(device_serial=device_serial)
+    latest: str = event["queryStringParameters"]['latest']
+    print(f'Latest {latest}')
+
+    request = GetSingleDeviceRequest(
+        device_serial=device_serial,
+        latest=latest,
+    )
+
+    if request.latest:
+        device_state: Optional[DeviceState] = repository.get_latest_battery_status_by_device_serial(
+            device_serial=device_serial
+        )
+    else:
+        device_state: Optional[DeviceState] = repository.get_all_battery_status_by_device_serial(
+            device_serial=device_serial
+        )
 
     if device_state:
         return {

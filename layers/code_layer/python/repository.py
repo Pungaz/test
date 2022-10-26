@@ -48,3 +48,25 @@ class Repository:
             return DeviceState.parse_obj(data['Items'][0])
 
         return None
+
+    def get_all_battery_status_by_device_serial(self, device_serial: str) -> Optional[DeviceState]:
+        data = self.dynamo_db.query(
+            TableName=self.table_name,
+            # IndexName='some-index',
+            KeyConditionExpression='#device_serial = :device_serial_value',
+            ExpressionAttributeValues={
+                ':device_serial_value': {
+                    'S': device_serial
+                },
+            },
+            ExpressionAttributeNames={
+                '#device_serial': 'device_serial'
+            },
+            ScanIndexForward=True,
+        )
+        print(f'Query result: {data}')
+
+        if data['Items']:
+            return DeviceState.parse_obj(data['Items'][0])
+
+        return None
