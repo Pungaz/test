@@ -7,7 +7,10 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
+    Layers:
+      - !Ref CodeLayer
+      - !Ref LibLayer
 
 Resources:
 
@@ -49,13 +52,6 @@ Resources:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
 
-  MyLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      ContentUri: layers/my_layer
-      CompatibleRuntimes:
-        - python3.9
-
   AddFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -64,8 +60,6 @@ Resources:
       Handler: app.lambda_handler
       Runtime: python3.9
       Description: Lambda function that writes devices to DynamoDb
-      Layers:
-        - !Ref MyLayer
       Events:
         AddImageApi:
           Type: Api
@@ -90,15 +84,17 @@ Resources:
       Handler: app.lambda_handler
       Runtime: python3.9
       Description: Lambda used for getting stuff
-      Layers:
-        - !Ref MyLayer
       Events:
         GetAllImagesApi:
           Type: Api
           Properties:
             RestApiId: !Ref ApiGateway
-            Path: /get
+            Path: /get/{device_serial}
             Method: GET
+#            ovo je da se doda query param
+#            RequestParameters:
+#              - method.request.querystring.device_serial:
+#                  Required: false
       Policies:
 #        - AWSLambdaExecute
         - DynamoDBCrudPolicy:
@@ -118,3 +114,19 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref DynamoTable
+
+  CodeLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: layers/code_layer
+      CompatibleRuntimes:
+        - python3.9
+
+  LibLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: layers/lib_layer
+      CompatibleRuntimes:
+        - python3.9
+    Metadata:
+      BuildMethod: python3.9

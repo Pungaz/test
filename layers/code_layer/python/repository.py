@@ -17,10 +17,10 @@ class Repository:
                     'S': device_state.device_serial
                 },
                 'battery': {
-                    'N': device_state.battery
+                    'N': str(device_state.battery)
                 },
                 'time_created': {
-                    'N': device_state.time_created
+                    'N': str(device_state.time_created)
                 }
             }
         )

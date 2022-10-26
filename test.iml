@@ -3,7 +3,8 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/layers/my_layer/python" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/layers/code_layer/python" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/layers/lib_layer" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.aws-sam" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.9" jdkType="Python SDK" />
